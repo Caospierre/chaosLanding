@@ -1,3 +1,6 @@
+import { ContactError } from "./contact.js";
+import { ContactDelivery } from "./contact-state.js";
+const contactDelivery = new ContactDelivery();
 import { TouchInput, nearLadder, cameraForPlayer } from "./mobile.js";
 import { drawPlayer } from "./player.js";
 import { Game, clamp } from "./game.js";
@@ -93,7 +96,9 @@ const pages = {
   habilidades: () =>
     `${portrait()}${title("05", "Con qué trabajo.", "Lenguajes, herramientas y áreas de trabajo.")}<div class="skills-list"><div class="block" data-block="languages"><strong>Lenguajes</strong><small>TypeScript · Python · Go · Scala</small></div><div class="block" data-block="web-mobile"><strong>Web y móvil</strong><small>React · Angular · Flutter</small></div><div class="block" data-block="backend"><strong>Backend</strong><small>Node.js · Spring Boot · Serverless</small></div><div class="block amber" data-block="infrastructure"><strong>Infraestructura</strong><small>AWS · Google Cloud · Firebase · Firestore</small></div><div class="block" data-block="security"><strong>Seguridad</strong><small>Hacking ético</small></div><div class="block" data-block="quality"><strong>Automatización y pruebas</strong><small>CI/CD · TDD · Pruebas unitarias</small></div></div><div class="block skills-note" data-block="skills-link">Español nativo · Inglés profesional · Francés en formación.<br><a href="${LI}" target="_blank" rel="noopener noreferrer">Más información en LinkedIn ↗</a></div>`,
   contacto: () =>
-    `${portrait()}${title("06", "Contacto.", "Cuéntame qué necesitas.")}<div class="block contact-card contact-form-card" data-block="contact"><form id="contact-form" class="contact-form" action="https://formsubmit.co/jppineda1537@gmail.com" method="POST"><input type="hidden" name="_subject" value="Una persona quiere ponerse en contacto contigo | Portafolio"><input type="hidden" name="_template" value="table"><input type="hidden" name="_next" value="${new URL("?contacto=enviado", new URL("./", location.href)).href}"><input type="hidden" name="Aviso" value="Hola ChaosPierre, esta persona busca ponerse en contacto contigo. Aquí tienes su información:"><div class="contact-honey" aria-hidden="true"><label>No completar<input type="text" name="_honey" tabindex="-1" autocomplete="off"></label></div><fieldset><div class="contact-row"><label for="visitor-email">TU CORREO <span>*</span><input id="visitor-email" name="email" type="email" placeholder="tu@correo.com" autocomplete="email" maxlength="254" required></label><label for="visitor-phone">TELÉFONO <small>OPCIONAL</small><input id="visitor-phone" name="Teléfono" type="tel" placeholder="+593 …" autocomplete="tel" maxlength="40"></label></div><label for="visitor-reason">MOTIVO <span>*</span><input id="visitor-reason" name="Motivo" placeholder="Una colaboración, un proyecto, una idea…" maxlength="150" required></label><label for="visitor-message">MENSAJE <span>*</span><textarea id="visitor-message" name="Mensaje" rows="3" placeholder="Hola ChaosPierre, me gustaría…" maxlength="5000" required></textarea></label><div class="contact-send"><button class="primary" type="submit">ENVIAR MENSAJE ↗</button><div class="social-links"><a href="${LI}" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a><a href="${GH}" target="_blank" rel="noopener noreferrer">GitHub ↗</a></div></div></fieldset><p class="contact-game-note">Sal del juego con ▶ o Esc para escribir.</p></form></div>`,
+    contactDelivery.state.status === "pending"
+      ? `${portrait()}${title("06", "Contacto.", "Tu mensaje se está enviando.")}<div class="block contact-card contact-pending" data-block="delivery" aria-busy="true"><span class="eyebrow">ENVÍO EN CURSO</span><h3>Los constructores llevan tu mensaje.</h3><p>Puedes seguir explorando o jugar. Te avisaré cuando se envíe.</p><div class="delivery-lane" aria-hidden="true"></div><button class="primary" data-go="perfil">VOLVER AL INICIO →</button></div>`
+      : `${portrait()}${title("06", "Contacto.", "Cuéntame qué necesitas.")}<div class="block contact-card contact-form-card" data-block="contact"><form id="contact-form" class="contact-form" action="https://formsubmit.co/d202890e64cfa55578401c6335562ddb" method="POST"><input type="hidden" name="_subject" value="Una persona quiere ponerse en contacto contigo | Portafolio"><input type="hidden" name="_template" value="table"><input type="hidden" name="_next" value="${new URL("?contacto=enviado", new URL("./", location.href)).href}"><input type="hidden" name="Aviso" value="Hola ChaosPierre, esta persona busca ponerse en contacto contigo. Aquí tienes su información:"><div class="contact-honey" aria-hidden="true"><label>No completar<input type="text" name="_honey" tabindex="-1" autocomplete="off"></label></div><fieldset><div class="contact-row"><label for="visitor-email">TU CORREO <span>*</span><input id="visitor-email" name="email" type="email" placeholder="tu@correo.com" autocomplete="email" maxlength="254" required></label><label for="visitor-phone">TELÉFONO <small>OPCIONAL</small><input id="visitor-phone" name="Teléfono" type="tel" placeholder="+593 …" autocomplete="tel" maxlength="40"></label></div><label for="visitor-reason">MOTIVO <span>*</span><input id="visitor-reason" name="Motivo" placeholder="Una colaboración, un proyecto, una idea…" maxlength="150" required></label><label for="visitor-message">MENSAJE <span>*</span><textarea id="visitor-message" name="Mensaje" rows="3" placeholder="Hola ChaosPierre, me gustaría…" maxlength="5000" required></textarea></label><div class="contact-send"><button class="primary" type="submit">ENVIAR MENSAJE ↗</button><div class="social-links"><a href="${LI}" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a><a href="${GH}" target="_blank" rel="noopener noreferrer">GitHub ↗</a></div></div></fieldset><p class="contact-result" role="status" aria-live="polite" hidden></p><p class="contact-game-note">Sal del juego con ▶ o Esc para escribir.</p></form></div>`,
 };
 let lastProgress = "",
   section = "perfil",
@@ -127,6 +132,171 @@ function tone(freq = 250, d = 0.07, type = "square") {
     g.connect(audio.destination);
     o.start();
     o.stop(audio.currentTime + d);
+  } catch {}
+}
+// Melodía original: rock en 8 bits con bajo y acordes de los sesenta.
+let musicTimer = null;
+let musicBeat = 0;
+function stopMusic() {
+  clearTimeout(musicTimer);
+  musicTimer = null;
+}
+function startMusic() {
+  stopMusic();
+  const melody = [
+    67,
+    69,
+    71,
+    74,
+    71,
+    69,
+    67,
+    64,
+    67,
+    69,
+    71,
+    76,
+    74,
+    71,
+    69,
+    null,
+    72,
+    72,
+    76,
+    79,
+    76,
+    74,
+    72,
+    69,
+    74,
+    71,
+    69,
+    66,
+    67,
+    null,
+    62,
+    null,
+  ];
+  const roots = [48, 48, 53, 55];
+  const gameMelody = [
+    64,
+    null,
+    67,
+    66,
+    64,
+    71,
+    70,
+    null,
+    64,
+    67,
+    71,
+    76,
+    75,
+    71,
+    67,
+    null,
+    60,
+    null,
+    63,
+    66,
+    69,
+    66,
+    63,
+    60,
+    59,
+    62,
+    65,
+    68,
+    71,
+    70,
+    65,
+    null,
+  ];
+  const gameRoots = [40, 40, 36, 35];
+  const frequency = (note) => 440 * 2 ** ((note - 69) / 12);
+  function note(pitch, duration, volume, type = "square") {
+    if (!sound || !audio || pitch == null) return;
+    const oscillator = audio.createOscillator();
+    const gain = audio.createGain();
+    const now = audio.currentTime;
+    oscillator.type = type;
+    oscillator.frequency.setValueAtTime(frequency(pitch), now);
+    gain.gain.setValueAtTime(0, now);
+    gain.gain.linearRampToValueAtTime(volume, now + 0.008);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+    oscillator.connect(gain);
+    gain.connect(audio.destination);
+    oscillator.onended = () => {
+      oscillator.disconnect();
+      gain.disconnect();
+    };
+    oscillator.start(now);
+    oscillator.stop(now + duration);
+  }
+  function tick() {
+    if (!sound) return;
+    if (!document.hidden && !$("dialog[open]")) {
+      const step = musicBeat % melody.length;
+      const root = (playing ? gameRoots : roots)[Math.floor(step / 8)];
+      note((playing ? gameMelody : melody)[step], playing ? 0.12 : 0.16, 0.012);
+      note(root + (step % 4 === 2 ? 7 : 0), 0.14, 0.025, "triangle");
+      if (playing) {
+        // Quintas cortas y un pulso grave para acompañar la acción.
+        note(root + 12, 0.085, 0.008, "sawtooth");
+        note(root + 19, 0.085, 0.005);
+        if (step % 4 === 0) note(28, 0.1, 0.035, "sine");
+        if (step % 4 === 2) note(78, 0.025, 0.006, "triangle");
+      } else if (step % 2 === 1) {
+        note(root + 12, 0.075, 0.005);
+        note(root + 16, 0.075, 0.004);
+        note(root + 19, 0.075, 0.004);
+      }
+      musicBeat++;
+    }
+    musicTimer = setTimeout(tick, playing ? 165 : 225);
+  }
+  tick();
+}
+function breakSound() {
+  if (!sound) return;
+  try {
+    audio ??= new (window.AudioContext || window.webkitAudioContext)();
+    audio.resume();
+    const duration = 0.22;
+    const buffer = audio.createBuffer(
+      1,
+      audio.sampleRate * duration,
+      audio.sampleRate,
+    );
+    const samples = buffer.getChannelData(0);
+    for (let i = 0; i < samples.length; i++) {
+      samples[i] = (Math.random() * 2 - 1) * (1 - i / samples.length);
+    }
+    const source = audio.createBufferSource();
+    const filter = audio.createBiquadFilter();
+    const gain = audio.createGain();
+    source.buffer = buffer;
+    filter.type = "lowpass";
+    filter.frequency.setValueAtTime(2300, audio.currentTime);
+    filter.frequency.exponentialRampToValueAtTime(
+      180,
+      audio.currentTime + duration,
+    );
+    gain.gain.setValueAtTime(0.07, audio.currentTime);
+    gain.gain.exponentialRampToValueAtTime(
+      0.0001,
+      audio.currentTime + duration,
+    );
+    source.connect(filter);
+    filter.connect(gain);
+    gain.connect(audio.destination);
+    source.onended = () => {
+      source.disconnect();
+      filter.disconnect();
+      gain.disconnect();
+    };
+    source.start();
+    tone(95, 0.12, "triangle");
   } catch {}
 }
 function announce(text) {
@@ -257,6 +427,7 @@ function render(next = section) {
     ),
   );
   resize();
+  syncContactForm();
   if (playing) {
     const fs = $("#contact-form fieldset");
     if (fs) fs.disabled = true;
@@ -265,7 +436,8 @@ function render(next = section) {
 }
 function start() {
   if (playing) {
-    stop();
+    if (externalPause.open) externalPause.close();
+    else pauseGame();
     return;
   }
   if (performance.now() < buildingUntil) {
@@ -273,6 +445,8 @@ function start() {
     return;
   }
   playing = true;
+  musicBeat = 0;
+  if (sound) startMusic();
   enterMobileGame();
   resize();
   const fs = $("#contact-form fieldset");
@@ -283,7 +457,7 @@ function start() {
   $("#hud").hidden = false;
   $("#mode").innerHTML = '<i class="live-dot"></i> MODO JUEGO';
   $("#play").classList.add("playing");
-  $("#play").setAttribute("aria-label", "Salir del juego");
+  $("#play").setAttribute("aria-label", "Pausar juego");
   $("#play").innerHTML =
     '<svg viewBox="0 0 24 24"><rect x="6" y="5" width="4" height="14" fill="currentColor" stroke="none"/><rect x="14" y="5" width="4" height="14" fill="currentColor" stroke="none"/></svg>';
   stage.focus({ preventScroll: true });
@@ -298,6 +472,9 @@ function start() {
 }
 function stop() {
   playing = false;
+  if (externalPause.open) externalPause.close();
+  musicBeat = 0;
+  if (sound) startMusic();
   clearTouchInput();
   exitMobileGame();
   keys = {};
@@ -535,6 +712,21 @@ function worker(
   }
   c.restore();
 }
+function envelope(c, x, y) {
+  rect(c, x, y, 23, 17, "#dfd8b0");
+  rect(c, x + 1, y + 1, 21, 2, "#fff4ca");
+  c.strokeStyle = "#927e48";
+  c.lineWidth = 1;
+  c.beginPath();
+  c.moveTo(x + 1, y + 2);
+  c.lineTo(x + 11, y + 10);
+  c.lineTo(x + 22, y + 2);
+  c.moveTo(x + 1, y + 16);
+  c.lineTo(x + 8, y + 9);
+  c.moveTo(x + 22, y + 16);
+  c.lineTo(x + 15, y + 9);
+  c.stroke();
+}
 function frame(t) {
   const dt = Math.min((t - last) / 1000 || 0.016, 0.035);
   last = t;
@@ -548,7 +740,7 @@ function frame(t) {
           const el = $(`[data-block="${ev.id}"]`);
           el?.classList.add("destroyed");
           drawBackground();
-          tone(160, 0.1, "sawtooth");
+          breakSound();
           $("#status").textContent = "bloque destruido. +100 pts";
         }
         if (ev.type === "enemy") {
@@ -559,6 +751,8 @@ function frame(t) {
           tone(90, 0.15, "sawtooth");
           announce("¡Cuidado con los constructores! Usa E para defenderte.");
         }
+        if (ev.type === "climb")
+          tone(ev.step % 2 ? 220 : 280, 0.045, "triangle");
         if (ev.type === "jump") tone(300, 0.05, "sine");
         if (ev.type === "swing") tone(120, 0.03);
         if (ev.type === "over") gameOver(ev.reason);
@@ -598,6 +792,28 @@ function frame(t) {
           walk: moving ? t / 150 + i : 0,
           carry: i === 0 || i === 3,
         });
+      }
+      if (contactDelivery.state.status === "pending") {
+        const deliveryBlock = game.blocks.find(
+          (b) => b.id === "delivery" && !b.dead,
+        );
+        if (deliveryBlock) {
+          const path = Math.max(50, deliveryBlock.w - 95);
+          for (let i = 0; i < 3; i++) {
+            const x =
+              deliveryBlock.x +
+              20 +
+              ((reduced ? (path * (i + 1)) / 4 : t / 34 + (i * path) / 3) %
+                path);
+            const y = deliveryBlock.y + deliveryBlock.h - 155;
+            worker(ctx, x, y, {
+              dir: 1,
+              walk: reduced ? 0 : t / 140 + i,
+              carry: true,
+            });
+            envelope(ctx, x + 24, y + 7);
+          }
+        }
       }
       const top = game.blocks.find(
         (b) => b.id === "identity" || b.id === "career" || b.id === "contact",
@@ -651,7 +867,15 @@ $$("dialog").forEach((d) =>
 );
 $("#sound").addEventListener("click", () => {
   sound = !sound;
+  if (!sound) {
+    stopMusic();
+    if (audio) audio.suspend();
+  } else {
+    tone(500, 0.1);
+    startMusic();
+  }
   $("#sound").setAttribute("aria-pressed", sound);
+  $("#sound").title = sound ? "Silenciar sonido" : "Activar sonido";
   $("#sound").setAttribute(
     "aria-label",
     sound ? "Desactivar sonido" : "Activar sonido",
@@ -659,19 +883,66 @@ $("#sound").addEventListener("click", () => {
   $("#sound").innerHTML = sound
     ? '<svg viewBox="0 0 24 24"><path d="M11 4 5 9H2v6h3l6 5ZM15 8q5 4 0 8m3-11q8 7 0 14"/></svg>'
     : '<svg viewBox="0 0 24 24"><path d="M11 4 5 9H2v6h3l6 5ZM16 9l5 6m0-6-5 6"/></svg>';
-  tone(500, 0.1);
+});
+function pauseGame() {
+  if (!playing || game?.state !== "playing" || externalPause.open) return;
+  keys = {};
+  clearTouchInput();
+  $("#play").setAttribute("aria-label", "Reanudar juego");
+  $("#play").innerHTML =
+    '<svg viewBox="0 0 24 24"><path d="m8 5 11 7-11 7Z" fill="currentColor" stroke="none"/></svg>';
+  externalPause.showModal();
+}
+const externalPause = document.createElement("dialog");
+externalPause.id = "external-pause";
+externalPause.setAttribute("aria-labelledby", "external-pause-title");
+externalPause.innerHTML = `<h2 id="external-pause-title">Juego en pausa</h2><p>Tu partida sigue aquí.</p><button class="primary" id="resume-external" type="button">SEGUIR JUGANDO ▶</button>`;
+$(".terminal").append(externalPause);
+// Todos los paneles suspenden la partida mediante la misma condición del bucle.
+for (const dialog of $$("dialog")) {
+  $(".terminal").append(dialog);
+  new MutationObserver(() => {
+    keys = {};
+    clearTouchInput();
+    if (!dialog.open && playing && !$("dialog[open]"))
+      stage.focus({ preventScroll: true });
+  }).observe(dialog, { attributes: true, attributeFilter: ["open"] });
+}
+
+$("#resume-external").addEventListener("click", () => externalPause.close());
+externalPause.addEventListener("close", () => {
+  if (playing) {
+    $("#play").setAttribute("aria-label", "Pausar juego");
+    $("#play").innerHTML =
+      '<svg viewBox="0 0 24 24"><rect x="6" y="5" width="4" height="14" fill="currentColor" stroke="none"/><rect x="14" y="5" width="4" height="14" fill="currentColor" stroke="none"/></svg>';
+  }
+  keys = {};
+  clearTouchInput();
+  stage.focus({ preventScroll: true });
 });
 content.addEventListener("click", async (e) => {
+  const area = e.target.closest("[data-area]");
+  if (area) {
+    e.preventDefault();
+    keys = {};
+    clearTouchInput();
+    openArea(area.dataset.area);
+    return;
+  }
   if (playing) {
+    const link = e.target.closest("a[href]");
+    if (
+      link &&
+      /^https?:$/.test(new URL(link.href).protocol) &&
+      new URL(link.href).origin !== location.origin
+    ) {
+      pauseGame();
+      return;
+    }
     if (e.target.closest(".block")) {
       e.preventDefault();
       game.attack();
     }
-    return;
-  }
-  const area = e.target.closest("[data-area]");
-  if (area) {
-    openArea(area.dataset.area);
     return;
   }
   const go = e.target.closest("[data-go]");
@@ -752,6 +1023,23 @@ $$("[data-key]").forEach((b) => {
 });
 let savedScroll = 0,
   rotateDismissed = false;
+async function requestLandscapeGame() {
+  try {
+    if (!document.fullscreenElement && document.fullscreenEnabled)
+      await $(".terminal").requestFullscreen();
+    if (!playing || !document.body.classList.contains("touch-game")) {
+      if (document.fullscreenElement) await document.exitFullscreen();
+      return;
+    }
+    if (screen.orientation?.lock) {
+      await screen.orientation.lock("landscape");
+      if (!playing) screen.orientation.unlock();
+    }
+  } catch {
+    // Si el navegador no permite bloquear el giro, conserva el juego y la sugerencia.
+  }
+  fitMobileGame();
+}
 function enterMobileGame() {
   if (!matchMedia("(pointer: coarse), (max-width: 720px)").matches) return;
   savedScroll = window.scrollY;
@@ -761,6 +1049,7 @@ function enterMobileGame() {
   stage.style.width = "1100px";
   stage.style.height = "650px";
   stage.style.minHeight = "650px";
+  void requestLandscapeGame();
 }
 let mobileViewport = { width: 0, height: 0 };
 function fitMobileGame() {
@@ -771,7 +1060,8 @@ function fitMobileGame() {
     height: viewport.clientHeight,
   };
   updateMobileCamera();
-  $(".rotate-hint").hidden = true;
+  $(".rotate-hint").hidden =
+    rotateDismissed || !matchMedia("(orientation: portrait)").matches;
 }
 function updateMobileCamera() {
   if (!document.body.classList.contains("touch-game")) return;
@@ -789,6 +1079,9 @@ function updateMobileCamera() {
 function exitMobileGame() {
   if (!document.body.classList.contains("touch-game")) return;
   document.body.classList.remove("touch-game");
+  try {
+    screen.orientation?.unlock?.();
+  } catch {}
   for (const property of ["width", "height", "min-height", "transform"])
     stage.style.removeProperty(property);
   $(".rotate-hint").hidden = true;
@@ -816,7 +1109,7 @@ $("#mobile-exit").addEventListener("click", stop);
 $("#mobile-fullscreen").addEventListener("click", async () => {
   try {
     if (document.fullscreenElement) await document.exitFullscreen();
-    else await $(".terminal").requestFullscreen();
+    else await requestLandscapeGame();
   } catch {
     announce("Puedes seguir jugando sin pantalla completa.");
   }
@@ -853,20 +1146,117 @@ $("#over-contact").addEventListener("click", (e) => {
   render("contacto");
   setTimeout(() => $("#visitor-email")?.focus({ preventScroll: true }), 1100);
 });
-content.addEventListener("submit", (e) => {
-  if (e.target.id !== "contact-form") return;
-  if (playing) {
-    e.preventDefault();
-    return;
+function syncContactForm() {
+  const form = $("#contact-form");
+  if (!form) return;
+  const state = contactDelivery.state;
+  for (const field of form.elements) {
+    if (field.type !== "hidden" && Object.hasOwn(state.values, field.name))
+      field.value = state.values[field.name];
   }
-  const button = e.target.querySelector('[type="submit"]');
-  button.textContent = "ABRIENDO ENVÍO…";
-  setTimeout(() => (button.textContent = "ENVIAR MENSAJE ↗"), 3500);
+  const result = form.querySelector(".contact-result");
+  if (state.status === "sent") {
+    form.reset();
+    result.textContent = "Mensaje enviado. Gracias por escribir.";
+    result.dataset.state = "success";
+    result.hidden = false;
+  }
+  if (state.status === "error") {
+    result.textContent =
+      state.error instanceof ContactError
+        ? state.error.message
+        : "No se pudo confirmar el envío. Tus datos siguen aquí.";
+    result.dataset.state = "error";
+    result.hidden = false;
+  }
+}
+let contactToastTimer;
+function contactToast(message, state = "info", returnToContact = false) {
+  const toast = $("#contact-toast");
+  clearTimeout(contactToastTimer);
+  $("#contact-toast-message").textContent = message;
+  toast.dataset.state = state;
+  toast.hidden = false;
+  $("#contact-toast-return").hidden = !returnToContact;
+  if (state !== "error")
+    contactToastTimer = setTimeout(() => (toast.hidden = true), 9000);
+}
+$("#contact-toast-close").addEventListener("click", () => {
+  $("#contact-toast").hidden = true;
+  clearTimeout(contactToastTimer);
+});
+$("#contact-toast-return").addEventListener("click", () => {
+  if (playing) stop();
+  render("contacto");
+  $("#contact-toast").hidden = true;
+});
+contactDelivery.onChange = (event, state) => {
+  if (event === "pending" && section === "contacto" && !playing)
+    render("contacto");
+  if (event === "slow") {
+    if (section === "contacto" && !playing) render("perfil");
+    contactToast(
+      "Está tardando un poco. Puedes seguir explorando o jugar mientras tanto.",
+    );
+  }
+  if (event === "sent" || event === "error") {
+    if (section === "contacto" && !playing) render("contacto");
+    else if (section === "contacto") {
+      const heading = $(".contact-pending h3");
+      const text = $(".contact-pending p");
+      if (heading)
+        heading.textContent =
+          event === "sent"
+            ? "Mensaje enviado."
+            : "No se pudo confirmar el envío.";
+      if (text)
+        text.textContent =
+          event === "sent"
+            ? "Gracias por escribir. Puedes seguir jugando."
+            : "Al salir del juego podrás volver a intentarlo.";
+    }
+    contactToast(
+      event === "sent"
+        ? state.slow
+          ? "Tardó un poco, pero tu mensaje ya se envió."
+          : "Mensaje enviado. Gracias por escribir."
+        : "No pudimos confirmar el envío. Guardamos lo que escribiste.",
+      event === "sent" ? "success" : "error",
+      event === "error",
+    );
+  }
+};
+content.addEventListener("submit", (e) => {
+  const form = e.target;
+  if (form.id !== "contact-form") return;
+  e.preventDefault();
+  if (
+    playing ||
+    contactDelivery.state.status === "pending" ||
+    !form.reportValidity()
+  )
+    return;
+  const action = form.action,
+    values = Object.fromEntries(new FormData(form));
+  const button = form.querySelector('[type="submit"]');
+  button.disabled = true;
+  button.textContent = "ENVIANDO…";
+  contactDelivery.send(action, values).catch(() => {});
 });
 
 $("#area-contact").addEventListener("click", () => {
   $("#area-dialog").close();
   render("contacto");
-  $("#visitor-reason").value = areas[selectedArea].reason;
+  const reason = $("#visitor-reason");
+  if (reason) reason.value = areas[selectedArea].reason;
   setTimeout(() => $("#visitor-email")?.focus({ preventScroll: true }), 900);
 });
+
+// Intenta reproducir al abrir; desbloquea el audio con el primer gesto si el navegador lo exige.
+$("#sound").click();
+function unlockAudio(event) {
+  if (!sound || event.target.closest?.("#sound")) return;
+  if (audio?.state === "suspended") audio.resume().catch(() => {});
+}
+document.addEventListener("pointerdown", unlockAudio, { capture: true });
+document.addEventListener("keydown", unlockAudio, { capture: true });

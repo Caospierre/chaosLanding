@@ -34,6 +34,8 @@ jobs:
           node --check dist/game.js
           node --check dist/player.js
           node --check dist/mobile.js
+          node --check dist/contact.js
+          node --check dist/contact-state.js
       - name: Ejecutar pruebas del juego
         run: npm test
       - name: Configurar Pages

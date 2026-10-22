@@ -2247,3 +2247,141 @@ body.touch-game .gameover h2 {
 body.touch-game .over-contact {
   font-size: 16px;
 }
+
+.contact-form button:disabled {
+  cursor: wait;
+  opacity: 0.6;
+  pointer-events: none;
+}
+.contact-result {
+  font-size: 10px !important;
+  line-height: 1.6;
+  margin: 12px 0 0 !important;
+  color: var(--mint) !important;
+}
+.contact-result[hidden] {
+  display: none;
+}
+.contact-result[data-state="error"] {
+  color: var(--amber) !important;
+}
+.contact-form fieldset:disabled {
+  opacity: 0.75;
+}
+.contact-form-card:has(.contact-result:not([hidden])) {
+  height: 62%;
+}
+@media (max-width: 720px) {
+  .contact-form-card:has(.contact-result:not([hidden])) {
+    height: 55%;
+  }
+  .contact-result {
+    font-size: 9px !important;
+  }
+}
+
+.contact-pending {
+  height: 52%;
+  padding: 25px;
+}
+.contact-pending h3 {
+  font-size: 25px;
+  max-width: 450px;
+  margin: 14px 0;
+}
+.contact-pending p {
+  font-size: 11px;
+  max-width: 440px;
+  margin: 0;
+}
+.delivery-lane {
+  height: 90px;
+  flex-shrink: 0;
+  border-bottom: 1px solid #496849;
+  margin: 0 0 18px;
+  background: linear-gradient(transparent 95%, #253e2a 95%);
+}
+.contact-pending > .primary {
+  align-self: flex-start;
+}
+.contact-toast {
+  position: fixed;
+  z-index: 100;
+  bottom: 22px;
+  right: 22px;
+  max-width: 430px;
+  display: flex;
+  gap: 13px;
+  align-items: flex-start;
+  padding: 17px 15px;
+  background: #142a1bf5;
+  border: 1px solid #6d9970;
+  border-radius: 6px;
+  box-shadow: 0 12px 45px #0008;
+  color: var(--text);
+  font: 12px/1.6 var(--mono);
+}
+.contact-toast[hidden] {
+  display: none;
+}
+.contact-toast .toast-mark {
+  color: var(--amber);
+  font-size: 20px;
+}
+.contact-toast p {
+  margin: 0;
+}
+.contact-toast[data-state="success"] {
+  border-color: var(--mint);
+}
+.contact-toast[data-state="error"] {
+  border-color: var(--amber);
+}
+#contact-toast-close {
+  margin-left: auto;
+  background: none;
+  color: var(--muted);
+  font-size: 20px;
+  line-height: 1;
+  padding: 2px 5px;
+}
+#contact-toast-return {
+  font: 10px var(--mono);
+  color: var(--mint);
+  background: none;
+  padding: 10px 0 0;
+}
+#contact-toast-return[hidden] {
+  display: none;
+}
+body.touch-game .contact-toast {
+  bottom: calc(100px + env(safe-area-inset-bottom));
+  left: 12px;
+  right: 12px;
+  max-width: 430px;
+  font-size: 11px;
+}
+body.touch-game .contact-pending {
+  height: 52%;
+}
+@media (max-width: 720px) {
+  .contact-pending {
+    height: 49%;
+    padding: 20px;
+  }
+  .contact-pending h3 {
+    font-size: 23px;
+  }
+  .contact-pending p {
+    font-size: 10px;
+  }
+  .delivery-lane {
+    height: 100px;
+  }
+  .contact-toast {
+    left: 12px;
+    right: 12px;
+    bottom: 16px;
+    font-size: 11px;
+  }
+}

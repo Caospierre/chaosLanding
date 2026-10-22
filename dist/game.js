@@ -248,7 +248,14 @@ export class Game {
       }
     }
     if (p.climb) {
-      p.climbPhase += Math.abs(p.y - oldY) * 0.12;
+      const distance = Math.abs(p.y - oldY);
+      p.climbPhase += distance * 0.12;
+      p.climbSoundDistance = (p.climbSoundDistance || 0) + distance;
+      if (p.climbSoundDistance >= 18) {
+        p.climbSoundDistance %= 18;
+        p.climbSoundStep = (p.climbSoundStep || 0) + 1;
+        this.emit("climb", { step: p.climbSoundStep });
+      }
     } else if (p.ground && Math.abs(p.x - oldX) > 0.05) {
       p.walkPhase += Math.abs(p.x - oldX) * 0.12;
     } else if (p.ground) {
