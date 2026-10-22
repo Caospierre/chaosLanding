@@ -1,0 +1,61 @@
+# Instrucciones y configuración local
+AGENTS.md
+.openai/
+.codex/
+.agents/
+.claude/
+
+# Dependencias y cachés
+node_modules/
+.cache/
+.npm/
+.pnpm-store/
+*.tsbuildinfo
+coverage/
+.nyc_output/
+
+# Variables de entorno y credenciales
+.env
+.env.*
+!.env.example
+!.env.sample
+.aws/
+.ssh/
+*.pem
+*.key
+*.p12
+*.pfx
+credentials.json
+service-account*.json
+
+# Editores
+.idea/
+.vscode/
+*.iml
+*.swp
+*.swo
+*~
+
+# Archivos temporales y reportes locales
+/tmp/
+/temp/
+/local/
+/private/
+/output/
+playwright-report/
+test-results/
+*.log
+*.tmp
+*.bak
+*.tar
+*.tar.gz
+*.tgz
+
+# Sistema operativo
+.DS_Store
+._*
+__MACOSX/
+Thumbs.db
+Desktop.ini
+
+# dist/ contiene el sitio y debe permanecer bajo seguimiento.

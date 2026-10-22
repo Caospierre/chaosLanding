@@ -1,1 +1,9 @@
-{"name":"jean-pineda-portfolio","private":true,"type":"module","scripts":{"dev":"python3 -m http.server 4173 --directory dist","test":"node --test tests/game.test.mjs"}}
+{
+  "name": "chaospierre-portfolio",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "python3 -m http.server 4173 --directory dist",
+    "test": "node --test tests/*.test.mjs"
+  }
+}

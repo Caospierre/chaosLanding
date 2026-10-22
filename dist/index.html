@@ -1,18 +1,262 @@
 <!doctype html>
 <html lang="es">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#0a1211"><meta name="description" content="Jean Pineda. Ingeniería de software y videojuegos. Explora un portafolio que se convierte en un juego de plataformas."><title>Jean Pineda — portfolio.exe</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='8' fill='%230a1211'/%3E%3Ctext x='6' y='28' fill='%237af4ae' font-family='monospace' font-size='24'%3E%3E_%3C/text%3E%3C/svg%3E"><link rel="stylesheet" href="style.css"></head>
-<body>
-<div class="page-meta"><span><i class="live-dot"></i> JEAN PINEDA / LABORATORIO PERSONAL</span><span>SOFTWARE + UN POCO DE CAOS</span></div>
-<main class="terminal">
-<header class="window-bar"><div class="dots" aria-hidden="true"><i></i><i></i><i></i></div><span>jean@portfolio<span class="muted">:~</span></span><span class="window-label">portfolio.exe <span class="muted">— v1.0</span></span><span class="system"><i class="live-dot"></i> SISTEMA EN LÍNEA</span></header>
-<div class="toolbar"><nav aria-label="Secciones del portafolio"><button class="nav active" data-section="perfil" aria-current="page"><span>01</span> Perfil</button><button class="nav" data-section="proyectos"><span>02</span> Proyectos</button><button class="nav" data-section="experiencia"><span>03</span> Experiencia</button><button class="nav" data-section="habilidades"><span>04</span> Habilidades</button><button class="nav" data-section="contacto"><span>05</span> Contacto</button></nav><div class="actions"><button id="play" class="icon-button play" aria-label="Jugar" title="Jugar"><svg viewBox="0 0 24 24"><path d="m8 5 11 7-11 7Z" fill="currentColor" stroke="none"/></svg></button><button id="rebuild" class="icon-button" aria-label="Reconstruir" title="Reconstruir"><svg viewBox="0 0 24 24"><path d="M20 10a8 8 0 1 0-1 7M20 4v6h-6"/></svg></button><button id="sound" class="icon-button" aria-label="Activar sonido" aria-pressed="false" title="Activar sonido"><svg viewBox="0 0 24 24"><path d="M11 4 5 9H2v6h3l6 5ZM16 9l5 6m0-6-5 6"/></svg></button><button id="help" class="icon-button" aria-label="Cómo jugar" title="Cómo jugar">?</button></div></div>
-<div class="level-strip"><span id="path">~/perfil</span><span id="mode"><i class="live-dot"></i> MODO EXPLORAR</span><span id="hud" hidden><span id="health" aria-label="3 vidas">♥ ♥ ♥</span> <span class="muted">/</span> <span id="points">0000</span> PTS</span></div>
-<section id="stage" class="stage" aria-label="Escenario interactivo del portafolio" tabindex="0"><canvas id="world" aria-hidden="true"></canvas><div class="ambient-label" aria-hidden="true">CONSTRUYENDO IDEAS, BLOQUE A BLOQUE.</div><div id="content" class="content"></div><canvas id="actors" aria-hidden="true"></canvas><div id="play-hint" class="play-hint"><span class="key-mini">▶</span> Este portafolio también se juega. <button id="start-inline">Entrar al juego ↗</button></div><div id="announcement" class="announcement" aria-live="polite"></div><div id="gameover" class="gameover" hidden><span class="over-code">PORTFOLIO.EXE</span><h2>GAME OVER<span>_</span></h2><a id="over-contact" class="over-contact" href="https://www.linkedin.com/in/jppineda1/" target="_blank" rel="noopener noreferrer">¿Quieres más? Contáctame ↗</a><p class="restart-line">Reconstruyendo en <b id="countdown">3</b>…</p><button id="restart-now">VOLVER A JUGAR ↻</button></div></section>
-<div class="game-controls" id="game-controls" hidden><div class="desktop-controls"><span><kbd>←</kbd><kbd>→</kbd> mover</span><span><kbd>Espacio</kbd> saltar</span><span><kbd>↑</kbd><kbd>↓</kbd> escalera</span><span><kbd>E</kbd> martillo</span><span><kbd>Esc</kbd> salir</span></div><div class="touch-controls"><div><button data-key="ArrowLeft" aria-label="Mover a la izquierda">←</button><button data-key="ArrowRight" aria-label="Mover a la derecha">→</button><button data-key="ArrowUp" aria-label="Subir escalera">↑</button><button data-key="ArrowDown" aria-label="Bajar escalera">↓</button></div><div><button data-key="Space" aria-label="Saltar">SALTAR</button><button data-key="KeyE" aria-label="Golpear con martillo" class="hammer-touch">⚒</button></div></div></div>
-<footer class="status-bar"><span class="status-text"><span class="prompt">❯</span> <span id="status" role="status">Iniciando constructores…</span><span class="cursor">▌</span></span><div class="assembly"><span id="progress" class="progress" aria-hidden="true"></span><span id="block-count">0/8 bloques</span></div></footer>
-</main>
-<div class="page-bottom"><span>HECHO DE CÓDIGO, IDEAS Y PÍXELES.</span><a href="https://www.linkedin.com/in/jppineda1/" target="_blank" rel="noopener noreferrer">ENCUÉNTRAME EN LINKEDIN ↗</a></div>
-<dialog id="help-dialog"><button class="close-dialog" aria-label="Cerrar instrucciones">×</button><span class="eyebrow">MANUAL DEL CONSTRUCTOR</span><h2>Explora. Juega.<br><em>Rompe las reglas.</em></h2><p>Las secciones de arriba muestran mi portafolio. Pulsa ▶ para tomar el control del constructor del casco amarillo.</p><ul><li><b>← → o A / D:</b> caminar.</li><li><b>Espacio:</b> saltar sobre cajas y tarjetas.</li><li><b>↑ ↓ o W / S:</b> subir y bajar por las escaleras.</li><li><b>E:</b> usar el martillo. Acércate y mira hacia el bloque o rival.</li><li><b>Esc:</b> volver al portafolio.</li></ul><p class="warning">Enfréntate a los constructores y descubre qué pasa al romper cada bloque.</p><button class="primary" id="help-play">ENTENDIDO, A JUGAR →</button></dialog>
-<dialog id="project-dialog"><button class="close-dialog" aria-label="Cerrar proyecto">×</button><img src="assets/snow-faller.png" class="project-icon" alt="Ícono de Snow Faller"><span class="eyebrow">PROYECTO / VIDEOJUEGO</span><h2>Snow Faller</h2><p>Una bola de nieve, plataformas y una salida que exige el tamaño correcto. Acumula nieve, esquiva obstáculos y decide cuándo arriesgarte.</p><div class="tags"><span>Phaser 3</span><span>TypeScript</span><span>Web Audio</span><span>Android</span></div><p class="muted">En preparación para Google Play.</p><a class="primary" href="https://www.linkedin.com/in/jppineda1/" target="_blank" rel="noopener noreferrer">CONVERSEMOS EN LINKEDIN ↗</a></dialog>
-<script type="module" src="app.js"></script>
-</body></html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#0a1211" />
+    <meta
+      name="description"
+      content="ChaosPierre. Desarrollo de software, infraestructura y seguridad. Experiencia, tecnologías y contacto en un portafolio interactivo."
+    />
+    <title>ChaosPierre — portfolio.exe</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='8' fill='%230a1211'/%3E%3Ctext x='6' y='28' fill='%237af4ae' font-family='monospace' font-size='24'%3E%3E_%3C/text%3E%3C/svg%3E"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="page-meta">
+      <span><i class="live-dot"></i> ChaosPierre / DESARROLLO DE SOFTWARE</span
+      ><span>SOFTWARE · INFRAESTRUCTURA · SEGURIDAD</span>
+    </div>
+    <main class="terminal">
+      <div class="mobile-gamebar">
+        <span>ChaosPierre <small> / JUEGO</small></span>
+        <div>
+          <button
+            id="mobile-fullscreen"
+            type="button"
+            aria-label="Pantalla completa"
+          >
+            ⛶</button
+          ><button id="mobile-exit" type="button">SALIR ×</button>
+        </div>
+      </div>
+      <header class="window-bar">
+        <div class="dots" aria-hidden="true"><i></i><i></i><i></i></div>
+        <span>ChaosPierre@portfolio<span class="muted">:~</span></span
+        ><span class="window-label"
+          >portfolio.exe <span class="muted">— v1.0</span></span
+        ><span class="system"><i class="live-dot"></i> SISTEMA EN LÍNEA</span>
+      </header>
+      <div class="toolbar">
+        <nav aria-label="Secciones del portafolio">
+          <button class="nav active" data-section="perfil" aria-current="page">
+            <span>01</span> Perfil</button
+          ><button class="nav" data-section="proyectos">
+            <span>02</span> Proyectos</button
+          ><button class="nav" data-section="juegos">
+            <span>03</span> Juegos</button
+          ><button class="nav" data-section="experiencia">
+            <span>04</span> Experiencia</button
+          ><button class="nav" data-section="habilidades">
+            <span>05</span> Habilidades</button
+          ><button class="nav" data-section="contacto">
+            <span>06</span> Contacto
+          </button>
+        </nav>
+        <div class="actions">
+          <button
+            id="play"
+            class="icon-button play"
+            aria-label="Jugar"
+            title="Jugar"
+          >
+            <svg viewBox="0 0 24 24">
+              <path d="m8 5 11 7-11 7Z" fill="currentColor" stroke="none" />
+            </svg></button
+          ><button
+            id="rebuild"
+            class="icon-button"
+            aria-label="Reconstruir"
+            title="Reconstruir"
+          >
+            <svg viewBox="0 0 24 24">
+              <path d="M20 10a8 8 0 1 0-1 7M20 4v6h-6" />
+            </svg></button
+          ><button
+            id="sound"
+            class="icon-button"
+            aria-label="Activar sonido"
+            aria-pressed="false"
+            title="Activar sonido"
+          >
+            <svg viewBox="0 0 24 24">
+              <path d="M11 4 5 9H2v6h3l6 5ZM16 9l5 6m0-6-5 6" />
+            </svg></button
+          ><button
+            id="help"
+            class="icon-button"
+            aria-label="Cómo jugar"
+            title="Cómo jugar"
+          >
+            ?
+          </button>
+        </div>
+      </div>
+      <div class="level-strip">
+        <span id="path">~/perfil</span
+        ><span id="mode"><i class="live-dot"></i> MODO EXPLORAR</span
+        ><span id="hud" hidden
+          ><span id="health" aria-label="3 vidas">♥ ♥ ♥</span>
+          <span class="muted">/</span> <span id="points">0000</span> PTS</span
+        >
+      </div>
+      <div class="game-viewport">
+        <div class="rotate-hint" hidden>
+          Gira el teléfono para ver mejor<button
+            id="dismiss-rotate"
+            type="button"
+            aria-label="Cerrar sugerencia de giro"
+          >
+            ×
+          </button>
+        </div>
+        <section
+          id="stage"
+          class="stage"
+          aria-label="Escenario interactivo del portafolio"
+          tabindex="0"
+        >
+          <canvas id="world" aria-hidden="true"></canvas>
+          <div class="ambient-label" aria-hidden="true">
+            SOFTWARE / INFRAESTRUCTURA / SEGURIDAD
+          </div>
+          <div id="content" class="content"></div>
+          <canvas id="actors" aria-hidden="true"></canvas>
+          <div id="play-hint" class="play-hint">
+            <span class="key-mini">▶</span> Este portafolio también se juega.
+            <button id="start-inline">Entrar al juego ↗</button>
+          </div>
+          <div id="announcement" class="announcement" aria-live="polite"></div>
+          <div id="gameover" class="gameover" hidden>
+            <span class="over-code">PORTFOLIO.EXE</span>
+            <h2>GAME OVER<span>_</span></h2>
+            <a id="over-contact" class="over-contact" href="#contacto"
+              >¿Quieres más? Contáctame →</a
+            >
+            <p class="restart-line">
+              Reconstruyendo en <b id="countdown">3</b>…
+            </p>
+            <button id="restart-now">VOLVER A JUGAR ↻</button>
+          </div>
+        </section>
+      </div>
+      <div class="game-controls" id="game-controls" hidden>
+        <div class="desktop-controls">
+          <span><kbd>←</kbd><kbd>→</kbd> mover</span
+          ><span><kbd>Espacio</kbd> saltar</span
+          ><span><kbd>↑</kbd><kbd>↓</kbd> escalera</span
+          ><span><kbd>E</kbd> martillo</span><span><kbd>Esc</kbd> salir</span>
+        </div>
+        <div class="touch-controls" aria-label="Controles táctiles del juego">
+          <div class="touch-move">
+            <button
+              type="button"
+              data-key="ArrowLeft"
+              aria-label="Mover a la izquierda"
+            >
+              ←</button
+            ><button
+              type="button"
+              data-key="ArrowRight"
+              aria-label="Mover a la derecha"
+            >
+              →
+            </button>
+          </div>
+          <div class="touch-ladder" aria-label="Escalera" hidden>
+            <button
+              type="button"
+              data-key="ArrowUp"
+              aria-label="Subir escalera"
+            >
+              ↑</button
+            ><button
+              type="button"
+              data-key="ArrowDown"
+              aria-label="Bajar escalera"
+            >
+              ↓
+            </button>
+          </div>
+          <div class="touch-actions">
+            <button type="button" data-key="Space" aria-label="Saltar">
+              <span aria-hidden="true">↥</span><small>SALTAR</small></button
+            ><button
+              type="button"
+              data-key="KeyE"
+              aria-label="Golpear con martillo"
+              class="hammer-touch"
+            >
+              <span aria-hidden="true">⚒</span><small>GOLPEAR</small>
+            </button>
+          </div>
+        </div>
+      </div>
+      <footer class="status-bar">
+        <span class="status-text"
+          ><span class="prompt">❯</span>
+          <span id="status" role="status">Iniciando constructores…</span
+          ><span class="cursor">▌</span></span
+        >
+        <div class="assembly">
+          <span id="progress" class="progress" aria-hidden="true"></span
+          ><span id="block-count">0/8 bloques</span>
+        </div>
+      </footer>
+    </main>
+    <div class="page-bottom">
+      <span>ChaosPierre · PORTAFOLIO</span>
+      <div class="social-links">
+        <a
+          href="https://www.linkedin.com/in/jppineda1/"
+          target="_blank"
+          rel="noopener noreferrer"
+          >LINKEDIN ↗</a
+        ><a
+          href="https://github.com/Caospierre"
+          target="_blank"
+          rel="noopener noreferrer"
+          >GITHUB ↗</a
+        >
+      </div>
+    </div>
+    <dialog id="help-dialog">
+      <button class="close-dialog" aria-label="Cerrar instrucciones">×</button
+      ><span class="eyebrow">MANUAL DEL CONSTRUCTOR</span>
+      <h2>Cómo jugar.</h2>
+      <p>
+        Las secciones de arriba muestran mi portafolio. Pulsa ▶ para tomar el
+        control del constructor del casco amarillo.
+      </p>
+      <ul>
+        <li><b>← → o A / D:</b> caminar.</li>
+        <li><b>Espacio:</b> saltar sobre cajas y tarjetas.</li>
+        <li><b>↑ ↓ o W / S:</b> subir y bajar por las escaleras.</li>
+        <li>
+          <b>E:</b> usar el martillo. Acércate y mira hacia el bloque o rival.
+        </li>
+        <li><b>Esc:</b> volver al portafolio.</li>
+      </ul>
+      <p class="warning">
+        Usa el martillo para romper bloques y golpear a los otros constructores.
+      </p>
+      <button class="primary" id="help-play">ENTENDIDO, A JUGAR →</button>
+    </dialog>
+
+    <dialog id="area-dialog" aria-labelledby="area-title">
+      <button class="close-dialog" aria-label="Cerrar detalles">×</button
+      ><span class="eyebrow">ÁREA DE TRABAJO</span>
+      <h2 id="area-title"></h2>
+      <p id="area-description"></p>
+      <div class="tags" id="area-tools"></div>
+      <button id="area-contact" class="primary">HABLEMOS →</button>
+    </dialog>
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
