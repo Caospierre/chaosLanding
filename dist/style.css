@@ -1964,7 +1964,9 @@ body.touch-game .touch-actions {
   margin-left: auto;
 }
 body.touch-game .touch-ladder {
-  margin-left: auto;
+  order: 3;
+  margin-left: 0;
+  align-self: flex-end;
 }
 body.touch-game .touch-ladder button {
   width: 44px;
